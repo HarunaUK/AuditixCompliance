@@ -55,12 +55,36 @@ For unlimited, higher-quality output, set:
 
 ## Deploying to Vercel
 
-1. Import the repo, set **Root Directory** to `auditix` and **Framework Preset** to Next.js.
-2. Add the AI variables above (keyless defaults are fine to start).
-3. Point `DATABASE_URL` at a hosted Postgres (Neon, Supabase, Vercel Postgres). The local
-   Prisma dev database does not exist on Vercel; run `prisma db push` and `npm run db:seed`
-   against the hosted database once.
-4. Set `AUTH_SECRET` and `AUTH_URL` to the deployed origin.
+The repository root is the app, so leave **Root Directory** empty and keep the **Next.js**
+preset. Vercel runs `npm install` (which generates the Prisma client) and `npm run build`.
 
-Policy generation can take 40–60 seconds on the free tier, so use a Pro/Enterprise plan or a
-longer `maxDuration` for those routes before relying on it in production.
+**1. Database.** Create a free Postgres (Neon is the quickest) and copy its *pooled*
+connection string. Locally, apply the schema and demo data once against it:
+
+```bash
+DATABASE_URL="postgres://…-pooler…" npx prisma migrate deploy
+DATABASE_URL="postgres://…-pooler…" npm run db:seed
+```
+
+The schema has no `directUrl`, so the pooled string is fine for both steps.
+
+**2. Environment variables** (Project → Settings → Environment Variables):
+
+| Variable | Value |
+| --- | --- |
+| `DATABASE_URL` | Neon **pooled** connection string (`?sslmode=require`) |
+| `AUTH_SECRET` | `openssl rand -base64 32` |
+| `NEXT_PUBLIC_APP_URL` | `https://<your-project>.vercel.app` |
+| `STORAGE_DRIVER` | `local` to start; `s3` + `S3_*` for durable evidence uploads |
+| `DEMO_EMAIL` / `DEMO_PASSWORD` | the seeded demo account |
+| `AI_KEYLESS` | `1` for the free keyless endpoint, `0` with `AI_API_KEY` for a provider |
+
+**3. Redeploy** after adding variables so the build picks them up.
+
+Evidence files: serverless filesystems are read-only apart from `/tmp`, so `STORAGE_DRIVER=local`
+uploads live only until the function recycles. Configure an S3-compatible bucket (Cloudflare R2
+has a free tier) for anything you want to keep.
+
+AI replies can take 40–60 seconds on the free keyless tier. Vercel's Hobby plan caps function
+duration at 60s; the assistant route declares `maxDuration = 60` and policy drafting runs as a
+server action under the same cap. A slower provider needs Pro or a faster model.
