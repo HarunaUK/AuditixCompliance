@@ -62,7 +62,7 @@ preset. Vercel runs `npm install` (which generates the Prisma client) and `npm r
 connection string. Locally, apply the schema and demo data once against it:
 
 ```bash
-DATABASE_URL="postgres://…-pooler…" npx prisma migrate deploy
+DATABASE_URL="postgres://…-pooler…" npm run db:deploy
 DATABASE_URL="postgres://…-pooler…" npm run db:seed
 ```
 
