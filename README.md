@@ -53,6 +53,36 @@ For unlimited, higher-quality output, set:
 | `AI_MODEL` | `gpt-4o-mini`, `glm-4.6`, `llama-3.3-70b-versatile` |
 | `AI_REASONING_EFFORT` | leave empty for non-reasoning models |
 
+## Deploying to Render
+
+[render.yaml](render.yaml) describes the whole stack, so **New → Blueprint → this repo**
+provisions a Node web service plus a Postgres database and wires `DATABASE_URL` for you
+(Render prompts only for `DEMO_PASSWORD`).
+
+If the service already exists, set it up by hand instead:
+
+| Setting | Value |
+| --- | --- |
+| Runtime / Language | **Node** (not Python) |
+| Build command | `npm install && npm run build` |
+| Start command | `node scripts/bootstrap.mjs && npm start` |
+| Health check path | `/api/v1/health` |
+
+Then create a Postgres instance, copy its **internal** connection string into `DATABASE_URL`,
+and add `AUTH_SECRET` (`openssl rand -base64 32`), `DEMO_EMAIL`, `DEMO_PASSWORD` and
+`AI_KEYLESS=1`.
+
+`npm start` runs plain `next start`, which listens on the `PORT` the platform assigns — a
+hardcoded port makes Render's port scan fail even when the build succeeds.
+
+`scripts/bootstrap.mjs` applies `prisma migrate deploy` on every boot and seeds the demo
+workspace only when the database is empty, so no manual migration step is needed. To seed or
+reset deliberately, run `npm run db:seed` from a Render shell.
+
+Free instance caveats: the service sleeps after inactivity (first request is slow), the free
+Postgres expires after 30 days, and uploads written with `STORAGE_DRIVER=local` are lost on
+every redeploy — configure the `S3_*` variables for anything you need to keep.
+
 ## Deploying to Vercel
 
 The repository root is the app, so leave **Root Directory** empty and keep the **Next.js**

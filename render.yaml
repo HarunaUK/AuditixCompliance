@@ -1,0 +1,40 @@
+# Render Blueprint — Auditix web service + managed Postgres.
+#
+# In the Render dashboard: New → Blueprint → pick this repo. Render reads this
+# file, provisions the database, wires DATABASE_URL and prompts only for the
+# demo password. Docs: https://render.com/docs/blueprint-spec
+#
+# First boot runs `scripts/bootstrap.mjs`, which applies Prisma migrations and
+# seeds the demo workspace only when the database has no users yet.
+
+databases:
+  - name: auditix-db
+    databaseName: auditix
+    user: auditix
+    plan: free
+
+services:
+  - type: web
+    name: auditix
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    # next start honours the PORT Render assigns; the bootstrap applies
+    # migrations (idempotent) and seeds only an empty database.
+    startCommand: node scripts/bootstrap.mjs && npm start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: auditix-db
+          property: connectionString
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: DEMO_EMAIL
+        value: auditix@faseel.app
+      - key: DEMO_PASSWORD
+        sync: false
+      - key: AI_KEYLESS
+        value: "1"

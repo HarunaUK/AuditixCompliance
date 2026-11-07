@@ -8,7 +8,7 @@
     "dev": "next dev -p 8077",
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
-    "start": "next start -p 8077",
+    "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:start": "prisma dev start auditix",
     "db:generate": "prisma generate",
@@ -16,7 +16,8 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "db:deploy": "prisma migrate deploy"
+    "db:deploy": "prisma migrate deploy",
+    "bootstrap": "node scripts/bootstrap.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
