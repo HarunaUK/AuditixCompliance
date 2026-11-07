@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-canvas: #080e21;
+  --color-panel: #0b132b;
+  --color-raised: #101d39;
+  --color-line: #223252;
+  --color-line-soft: #17233c;
+  --color-ink: #f1f5f9;
+  --color-muted: #94a3b8;
+  --color-faint: #64748b;
+  --color-brand: #38bdf8;
+  --color-brand-strong: #2563eb;
+  --color-mint: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-violet: #818cf8;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --radius-card: 16px;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.28);
+  color: #e0f2fe;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: #080e21;
+}
+::-webkit-scrollbar-thumb {
+  background: #223252;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334a70;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.75);
+  outline-offset: 2px;
+}
+
+.brand-grid {
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black, transparent 88%);
+}
+
+.glass {
+  background: rgba(11, 19, 43, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.hero-glow {
+  background:
+    radial-gradient(720px 420px at 14% 8%, rgba(56, 189, 248, 0.18), transparent 66%),
+    radial-gradient(620px 440px at 86% 20%, rgba(79, 70, 229, 0.16), transparent 68%),
+    radial-gradient(520px 360px at 60% 100%, rgba(52, 211, 153, 0.08), transparent 70%);
+}
+
+.text-gradient {
+  background: linear-gradient(120deg, #ffffff 10%, #bae6fd 48%, #38bdf8 78%, #818cf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ring-sheen {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 60px -34px rgba(0, 0, 0, 0.8);
+}
+
+.prose-auditix {
+  color: #cbd5e1;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.prose-auditix h1 {
+  color: #f1f5f9;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  margin: 0 0 18px;
+}
+.prose-auditix h2 {
+  color: #f1f5f9;
+  font-size: 17px;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+  margin: 28px 0 10px;
+}
+.prose-auditix h3 {
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 22px 0 8px;
+}
+.prose-auditix p {
+  margin: 0 0 13px;
+}
+.prose-auditix ul,
+.prose-auditix ol {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+.prose-auditix ul {
+  list-style: disc;
+}
+.prose-auditix ol {
+  list-style: decimal;
+}
+.prose-auditix li {
+  margin: 4px 0;
+}
+.prose-auditix li::marker {
+  color: #38bdf8;
+}
+.prose-auditix strong {
+  color: #f1f5f9;
+  font-weight: 600;
+}
+.prose-auditix a {
+  color: #7dd3fc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-auditix blockquote {
+  margin: 16px 0;
+  border-left: 2px solid #38bdf8;
+  background: rgba(56, 189, 248, 0.06);
+  padding: 10px 16px;
+  color: #bae6fd;
+  border-radius: 0 8px 8px 0;
+}
+.prose-auditix code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: #101d39;
+  border: 1px solid #223252;
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: #bae6fd;
+}
+.prose-auditix pre {
+  background: #060b18;
+  border: 1px solid #223252;
+  border-radius: 10px;
+  padding: 14px;
+  overflow-x: auto;
+  margin: 0 0 14px;
+}
+.prose-auditix pre code {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #cbd5e1;
+}
+.prose-auditix table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 16px;
+  font-size: 12.5px;
+}
+.prose-auditix th,
+.prose-auditix td {
+  border: 1px solid #223252;
+  padding: 8px 10px;
+  text-align: left;
+}
+.prose-auditix th {
+  background: #101d39;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+.prose-auditix hr {
+  border: 0;
+  border-top: 1px solid #223252;
+  margin: 22px 0;
+}
+
+@media print {
+  body {
+    background: white;
+    color: #0f172a;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

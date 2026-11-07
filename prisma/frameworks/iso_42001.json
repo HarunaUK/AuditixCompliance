@@ -1,0 +1,234 @@
+[
+  {
+    "ref": "A.2.2",
+    "title": "AI policy",
+    "domain": "A.2",
+    "domainLabel": "AI policy",
+    "iso": ["A.5.1"],
+    "desc": "Establish a management-approved AI policy that states objectives, principles and commitments for responsible AI, sets acceptable use, assigns accountability and records legal and ethical obligations. Communicate it to everyone working with or affected by AI systems."
+  },
+  {
+    "ref": "A.2.3",
+    "title": "Alignment with other policies",
+    "domain": "A.2",
+    "domainLabel": "AI policy",
+    "iso": ["A.5.1"],
+    "desc": "Make the AI policy consistent with, and cross-reference, the information security, privacy, data governance and quality policies so that obligations do not contradict each other."
+  },
+  {
+    "ref": "A.2.4",
+    "title": "Review of the AI policy",
+    "domain": "A.2",
+    "domainLabel": "AI policy",
+    "iso": ["A.5.1"],
+    "desc": "Review the AI policy at planned intervals and after significant organisational or regulatory change, and record the review, its outcome and approval."
+  },
+  {
+    "ref": "A.3.2",
+    "title": "AI roles and responsibilities",
+    "domain": "A.3",
+    "domainLabel": "Organization",
+    "iso": ["A.5.2", "A.5.3"],
+    "desc": "Define, document and assign the roles, responsibilities and authorities needed across the AI lifecycle, including who can approve, deploy, monitor and retire an AI system. Keep duties segregated where conflicts of interest exist."
+  },
+  {
+    "ref": "A.3.3",
+    "title": "Reporting concerns",
+    "domain": "A.3",
+    "domainLabel": "Organization",
+    "iso": ["A.6.8"],
+    "desc": "Provide a confidential channel for staff, contractors and third parties to raise concerns about AI safety, bias or misuse, with triage, escalation and protection against retaliation."
+  },
+  {
+    "ref": "A.4.2",
+    "title": "AI resources",
+    "domain": "A.4",
+    "domainLabel": "Resources",
+    "iso": ["A.5.23"],
+    "desc": "Determine and document the resources needed to develop, operate, monitor and improve AI systems — people, data, tooling, compute and budget — and review them as systems change."
+  },
+  {
+    "ref": "A.4.3",
+    "title": "Data resources",
+    "domain": "A.4",
+    "domainLabel": "Resources",
+    "iso": ["A.5.12"],
+    "desc": "Document the data resources each AI system relies on: source, type, sensitivity, ownership, licensing, retention and any restrictions on use."
+  },
+  {
+    "ref": "A.4.4",
+    "title": "Tooling resources",
+    "domain": "A.4",
+    "domainLabel": "Resources",
+    "iso": ["A.8.9"],
+    "desc": "Document development and operations tooling — frameworks, libraries, model registries, MLOps pipelines and monitoring — including versions, support status and security posture."
+  },
+  {
+    "ref": "A.4.5",
+    "title": "Compute & hosting resources",
+    "domain": "A.4",
+    "domainLabel": "Resources",
+    "iso": ["A.5.23"],
+    "desc": "Document compute and hosting resources used for training and inference, with capacity, location, tenancy and the controls that protect them."
+  },
+  {
+    "ref": "A.4.6",
+    "title": "Human resources & competence",
+    "domain": "A.4",
+    "domainLabel": "Resources",
+    "iso": ["A.6.3"],
+    "desc": "Identify the competences required to build, operate and oversee AI systems, and ensure the people in those roles are trained, competent and sufficient in number."
+  },
+  {
+    "ref": "A.5.2",
+    "title": "AI impact assessment process",
+    "domain": "A.5",
+    "domainLabel": "Impact assessment",
+    "iso": ["A.5.1"],
+    "desc": "Define a documented process for assessing the consequences of AI systems on individuals, groups and society, including triggers, responsibilities and how findings feed risk treatment."
+  },
+  {
+    "ref": "A.5.3",
+    "title": "Recording impact assessments",
+    "domain": "A.5",
+    "domainLabel": "Impact assessment",
+    "iso": ["A.5.1"],
+    "desc": "Record the scope, findings, decisions and approvals of each impact assessment, retain them for the required period and version them when the system or its context changes."
+  },
+  {
+    "ref": "A.5.4",
+    "title": "Impact on individuals & groups",
+    "domain": "A.5",
+    "domainLabel": "Impact assessment",
+    "iso": ["A.5.34"],
+    "desc": "Assess the effects of each AI system on individuals and groups — rights, fairness, discrimination, health, safety and economic harm — and record the mitigations applied."
+  },
+  {
+    "ref": "A.5.5",
+    "title": "Societal & environmental impact",
+    "domain": "A.5",
+    "domainLabel": "Impact assessment",
+    "iso": [],
+    "desc": "Assess wider societal and environmental impacts such as information integrity, sustainability, accessibility and effects on vulnerable groups, and document mitigation and monitoring."
+  },
+  {
+    "ref": "A.7.2",
+    "title": "Data for development",
+    "domain": "A.7",
+    "domainLabel": "Data",
+    "iso": ["A.5.12"],
+    "desc": "Define and verify the requirements for data used to develop AI systems: relevance to the intended use, representativeness, sufficient quantity, quality and permitted use."
+  },
+  {
+    "ref": "A.7.3",
+    "title": "Data acquisition & provenance",
+    "domain": "A.7",
+    "domainLabel": "Data",
+    "iso": ["A.5.34"],
+    "desc": "Document how data is obtained, its provenance, licensing and legal basis or consent, and prevent use of data that infringes intellectual property or privacy obligations."
+  },
+  {
+    "ref": "A.7.4",
+    "title": "Data quality",
+    "domain": "A.7",
+    "domainLabel": "Data",
+    "iso": ["A.5.12"],
+    "desc": "Set and check quality criteria for training, validation and operational data — accuracy, completeness, consistency and timeliness — and record how defects are corrected."
+  },
+  {
+    "ref": "A.7.5",
+    "title": "Data provenance tracing",
+    "domain": "A.7",
+    "domainLabel": "Data",
+    "iso": ["A.8.11"],
+    "desc": "Maintain traceability from each AI system and model version back to the datasets and processing steps that produced it, so that data lineage can be demonstrated."
+  },
+  {
+    "ref": "A.7.6",
+    "title": "Data preparation",
+    "domain": "A.7",
+    "domainLabel": "Data",
+    "iso": ["A.8.32"],
+    "desc": "Control and document data preparation — cleaning, labelling, transformation, augmentation and de-identification — so that processing is repeatable and does not introduce bias or loss."
+  },
+  {
+    "ref": "A.8.2",
+    "title": "System documentation for users",
+    "domain": "A.8",
+    "domainLabel": "Information for parties",
+    "iso": ["A.5.37"],
+    "desc": "Provide users and operators with documentation describing the intended use, capabilities, limitations, assumptions and required human oversight of each AI system."
+  },
+  {
+    "ref": "A.8.3",
+    "title": "External reporting channel",
+    "domain": "A.8",
+    "domainLabel": "Information for parties",
+    "iso": ["A.5.7"],
+    "desc": "Publish a route for external parties to report suspected AI incidents, unsafe behaviour or adverse impacts, and define how reports are acknowledged, investigated and answered."
+  },
+  {
+    "ref": "A.8.4",
+    "title": "Incident communication",
+    "domain": "A.8",
+    "domainLabel": "Information for parties",
+    "iso": ["A.5.24"],
+    "desc": "Define who communicates AI incidents to affected people, customers and regulators, what is disclosed, within what timeframe and with what approvals."
+  },
+  {
+    "ref": "A.8.5",
+    "title": "Information to interested parties",
+    "domain": "A.8",
+    "domainLabel": "Information for parties",
+    "iso": ["A.5.34"],
+    "desc": "Give interested parties the information they need about how AI systems are used, including purpose, data involved, oversight and how to exercise their rights."
+  },
+  {
+    "ref": "A.9.2",
+    "title": "Processes for responsible use",
+    "domain": "A.9",
+    "domainLabel": "Responsible use",
+    "iso": ["A.5.1"],
+    "desc": "Define the processes that keep use of AI systems responsible in practice: approval to use, human oversight, monitoring, escalation and the ability to suspend or stop a system."
+  },
+  {
+    "ref": "A.9.3",
+    "title": "Objectives for responsible use",
+    "domain": "A.9",
+    "domainLabel": "Responsible use",
+    "iso": ["A.5.1"],
+    "desc": "Set measurable objectives for responsible AI use and review performance against them at planned intervals, alongside the organisation's other information security objectives."
+  },
+  {
+    "ref": "A.9.4",
+    "title": "Intended use",
+    "domain": "A.9",
+    "domainLabel": "Responsible use",
+    "iso": ["A.5.10"],
+    "desc": "Record and approve the intended use of each AI system, define prohibited uses, and check that actual use stays within those boundaries, including through user terms and monitoring."
+  },
+  {
+    "ref": "A.10.2",
+    "title": "Allocating responsibilities",
+    "domain": "A.10",
+    "domainLabel": "Third parties",
+    "iso": ["A.5.19", "A.5.20"],
+    "desc": "Allocate AI responsibilities between the organisation and third parties in contracts and agreements, covering data, model updates, monitoring, incidents and assurance evidence."
+  },
+  {
+    "ref": "A.10.3",
+    "title": "Suppliers",
+    "domain": "A.10",
+    "domainLabel": "Third parties",
+    "iso": ["A.5.19"],
+    "desc": "Assess AI suppliers before engagement and at planned intervals, including their security, data handling, model governance and ability to notify changes or incidents."
+  },
+  {
+    "ref": "A.10.4",
+    "title": "Customers",
+    "domain": "A.10",
+    "domainLabel": "Third parties",
+    "iso": ["A.5.34"],
+    "desc": "Give customers the information and controls they need when the organisation provides AI-enabled services, including intended use, limitations, data use and incident notification."
+  }
+]

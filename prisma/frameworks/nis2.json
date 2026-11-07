@@ -1,0 +1,128 @@
+[
+  {
+    "ref": "NIS2-Art.3-27",
+    "title": "Scope assessment and entity registration",
+    "domain": "Governance",
+    "domainLabel": "Governance & accountability",
+    "desc": "Determine whether you are an essential or important entity in a Member State (sector, size, or explicit designation), self-identify where required and submit the registration information to the competent authority. Record the basis for the assessment and review it when the business changes sector, size or service."
+  },
+  {
+    "ref": "NIS2-Art.20",
+    "title": "Management-body accountability and training",
+    "domain": "Governance",
+    "domainLabel": "Governance & accountability",
+    "desc": "The management body must approve and oversee the cyber risk-management measures, be accountable for their implementation, and complete cyber security training. Keep minutes of the approval, the risk decisions and each member's training record."
+  },
+  {
+    "ref": "NIS2-Art.21(1)",
+    "title": "Approved cyber risk-management framework",
+    "domain": "Risk and policy",
+    "domainLabel": "Risk & policy",
+    "desc": "Put in place a documented, management-approved framework of technical, operational and organisational measures to manage the cyber risks to the network and information systems you use for your operations or services. It must be proportionate and evidence-based, not a policy shelf."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(a)",
+    "title": "Risk analysis and information-system security policies",
+    "domain": "Risk and policy",
+    "domainLabel": "Risk & policy",
+    "desc": "Maintain a current risk analysis covering your services, systems and suppliers, and a set of security policies derived from it. The analysis is the input; the policies are the approved response, and both need an owner and a review cycle."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(b)",
+    "title": "Incident handling",
+    "domain": "Incidents",
+    "domainLabel": "Incident handling",
+    "desc": "Operate a documented incident-handling capability: detection, triage, escalation, containment, recovery and post-incident review, with named roles and contact routes. Keep incident records for the regulator and for the reporting duties under Article 23."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(c)",
+    "title": "Business continuity, backup and crisis management",
+    "domain": "Resilience",
+    "domainLabel": "Resilience & continuity",
+    "desc": "Maintain business continuity and disaster recovery plans, tested backups (including restoration tests) and a crisis-management process that can be invoked by the management body. Evidence is a restore test with a date, scope and result, not the existence of a backup product."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(d)",
+    "title": "Supply-chain security",
+    "domain": "Supply chain",
+    "domainLabel": "Supply-chain security",
+    "desc": "Assess and manage the security of direct suppliers and service providers, including their security practices and product quality, and reflect the required controls in contracts. Maintain a supplier register with criticality, access, assurance evidence and review dates."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(e)",
+    "title": "Secure acquisition, development and maintenance",
+    "domain": "Engineering",
+    "domainLabel": "Secure engineering",
+    "desc": "Build security into acquisition, development and maintenance, including vulnerability handling and disclosure. Track vulnerabilities to remediation within defined timescales and record exceptions with an owner and an end date."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(f)",
+    "title": "Effectiveness assessment and assurance",
+    "domain": "Risk and policy",
+    "domainLabel": "Risk & policy",
+    "desc": "Assess the effectiveness of the risk-management measures through internal audit, testing or independent review, and act on the findings. Keep the assessment scope, method, results and the resulting corrective actions."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(g)",
+    "title": "Cyber hygiene and security training",
+    "domain": "People",
+    "domainLabel": "People & access",
+    "desc": "Provide basic cyber hygiene practices and regular security training to staff and, where relevant, to management. Completion records per person are the evidence the authority will ask for."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(h)",
+    "title": "Cryptography and encryption policy",
+    "domain": "Cryptography",
+    "domainLabel": "Cryptography",
+    "desc": "Define and apply a cryptography policy: what must be encrypted in transit and at rest, approved algorithms and key lengths, key management and rotation, and the legacy exceptions with a remediation plan."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(i)",
+    "title": "HR security, access control and asset management",
+    "domain": "People",
+    "domainLabel": "People & access",
+    "desc": "Manage identities and access on least privilege, with joiner-mover-leaver controls, periodic access reviews and privileged-access oversight. Maintain an asset inventory that covers the systems in scope of your NIS2 services."
+  },
+  {
+    "ref": "NIS2-Art.21(2)(j)",
+    "title": "MFA, secure communications and emergency channels",
+    "domain": "People",
+    "domainLabel": "People & access",
+    "desc": "Use multi-factor authentication, secured voice, video and text communications, and secured emergency communication systems. Ensure the emergency channel does not depend on the systems it is meant to protect."
+  },
+  {
+    "ref": "NIS2-Art.21(3)",
+    "title": "Technical and methodological requirements",
+    "domain": "Risk and policy",
+    "domainLabel": "Risk & policy",
+    "desc": "Apply the technical and methodological requirements adopted by the Commission for the relevant categories of entities and services, including the security of software and hardware supply chains. Track which implementing or delegated acts apply to you and the gap to each."
+  },
+  {
+    "ref": "NIS2-Art.23(1)",
+    "title": "Early warning within 24 hours",
+    "domain": "Reporting",
+    "domainLabel": "Incident reporting",
+    "desc": "Submit an early warning to the CSIRT or competent authority without undue delay and in any event within 24 hours of becoming aware of a significant incident, stating the suspected cause, cross-border impact and whether it is likely malicious."
+  },
+  {
+    "ref": "NIS2-Art.23(2)",
+    "title": "Incident notification within 72 hours",
+    "domain": "Reporting",
+    "domainLabel": "Incident reporting",
+    "desc": "Follow the early warning with an incident notification within 72 hours, updating severity, indicators of compromise and the initial assessment of impact. Keep the submitted notifications and the evidence they reference."
+  },
+  {
+    "ref": "NIS2-Art.23(3)",
+    "title": "Final report within one month",
+    "domain": "Reporting",
+    "domainLabel": "Incident reporting",
+    "desc": "Submit a final report within one month of the notification covering root cause, mitigation applied, cross-border impact and any corrective measures taken. Where the incident is ongoing, provide a progress report and a final report within one month of handling it."
+  },
+  {
+    "ref": "NIS2-Art.24",
+    "title": "Use of European cyber security certification schemes",
+    "domain": "Assurance",
+    "domainLabel": "Assurance & certification",
+    "desc": "Where available and applicable, use European cyber security certification schemes to demonstrate conformity of the systems or services in scope. Record which scheme is used, the certificate scope and its validity."
+  }
+]

@@ -1,0 +1,874 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+  CONSULTANT
+}
+
+enum Plan {
+  GROWTH
+  PRO
+  CONSULTANT
+}
+
+enum PolicyStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  RETIRED
+}
+
+enum RiskStatus {
+  OPEN
+  MONITORING
+  MITIGATED
+  CLOSED
+}
+
+enum Treatment {
+  MITIGATE
+  ACCEPT
+  TRANSFER
+  AVOID
+}
+
+enum ControlStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  IMPLEMENTED
+  NOT_APPLICABLE
+}
+
+enum EvidenceKind {
+  DOCUMENT
+  SCREENSHOT
+  LOG
+  REPORT
+  OTHER
+}
+
+enum ContextType {
+  INTERNAL
+  EXTERNAL
+  PARTY
+}
+
+enum ObjectiveStatus {
+  NOT_STARTED
+  ON_TRACK
+  AT_RISK
+  MET
+  MISSED
+}
+
+enum AuditStatus {
+  PLANNED
+  COMPLETED
+}
+
+enum TrainingStatus {
+  ASSIGNED
+  COMPLETED
+}
+
+enum SupplierCriticality {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum SupplierStatus {
+  ACTIVE
+  UNDER_REVIEW
+  SUSPENDED
+  EXITED
+}
+
+enum IncidentSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  CONTAINED
+  RESOLVED
+  CLOSED
+}
+
+enum IncidentCategory {
+  PHISHING
+  MALWARE
+  UNAUTHORISED_ACCESS
+  DATA_BREACH
+  AVAILABILITY
+  LOST_DEVICE
+  POLICY_BREACH
+  SUPPLIER
+  OTHER
+}
+
+enum ActionStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  VERIFIED
+}
+
+enum ActionPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ActionSource {
+  INCIDENT
+  AUDIT
+  MANAGEMENT_REVIEW
+  SUPPLIER
+  RISK
+  OTHER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  memberships            WorkspaceMember[]
+  ownedPolicies          Policy[]                 @relation("PolicyOwner")
+  ownedRisks             Risk[]                   @relation("RiskOwner")
+  ownedActions           RiskAction[]             @relation("ActionOwner")
+  policyVersions         PolicyVersion[]
+  evidence               Evidence[]
+  auditEvents            AuditEvent[]
+  ownedSuppliers         Supplier[]               @relation("SupplierOwner")
+  ownedIncidents         Incident[]               @relation("IncidentOwner")
+  ownedCorrectiveActions CorrectiveAction[]       @relation("CorrectiveActionOwner")
+  incidentUpdates        IncidentUpdate[]         @relation("IncidentUpdateActor")
+  ownedControls          WorkspaceControl[]       @relation("FrameworkControlOwner")
+  ownedAssets            Asset[]                  @relation("AssetOwner")
+  ownedImpactAnalyses    BusinessImpactAnalysis[] @relation("ImpactOwner")
+  ownedMeasurements      Measurement[]            @relation("MeasurementOwner")
+  ownedAiSystems         AiSystem[]               @relation("AiSystemOwner")
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  plan      Plan     @default(GROWTH)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ISMS context (ISO/IEC 27001:2022 Clauses 4.3 and 6.1.2)
+  scopeStatement             String?   @db.Text
+  scopeUpdatedAt             DateTime?
+  methodologyProcess         String?   @db.Text
+  methodologyLikelihood      String?   @db.Text
+  methodologyImpact          String?   @db.Text
+  acceptanceCriteria         String?   @db.Text
+  methodologyReviewFrequency String?
+  methodologyUpdatedAt       DateTime?
+  reuseIsoEvidence           Boolean   @default(false)
+
+  profile            WorkspaceProfile?
+  contextItems       ContextItem[]
+  roles              IsmsRole[]
+  objectives         Objective[]
+  internalAudits     InternalAudit[]
+  managementReviews  ManagementReview[]
+  trainingRecords    TrainingRecord[]
+  suppliers          Supplier[]
+  incidents          Incident[]
+  correctiveActions  CorrectiveAction[]
+  members            WorkspaceMember[]
+  policies           Policy[]
+  risks              Risk[]
+  evidence           Evidence[]
+  controls           WorkspaceControl[]
+  assets             Asset[]
+  impactAnalyses     BusinessImpactAnalysis[]
+  measurements       Measurement[]
+  aiSystems          AiSystem[]
+  aiAssessments      AiImpactAssessment[]
+  auditEvents        AuditEvent[]
+  integrations       Integration[]
+  evidenceChecks     EvidenceCheck[]
+  vulnerabilityScans VulnerabilityScan[]
+  ssoSettings        SsoSettings?
+  scimTokens         ScimToken[]
+}
+
+model WorkspaceProfile {
+  id             String   @id @default(cuid())
+  workspaceId    String   @unique
+  companyName    String?
+  industry       String?
+  headcount      Int?
+  geography      String?
+  dataTypes      String?
+  cloudProviders String?
+  saasTools      String?
+  keySystems     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model ContextItem {
+  id          String      @id @default(cuid())
+  workspaceId String
+  type        ContextType
+  party       String?
+  description String      @db.Text
+  needs       String?     @db.Text
+  relevance   String?     @db.Text
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, type])
+}
+
+model IsmsRole {
+  id               String   @id @default(cuid())
+  workspaceId      String
+  role             String
+  holder           String?
+  responsibilities String   @db.Text
+  authority        String?  @db.Text
+  reportsTo        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+model Objective {
+  id           String          @id @default(cuid())
+  workspaceId  String
+  title        String
+  measure      String          @db.Text
+  target       String?
+  owner        String?
+  dueDate      DateTime?
+  status       ObjectiveStatus @default(NOT_STARTED)
+  progressNote String?         @db.Text
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+}
+
+model InternalAudit {
+  id          String      @id @default(cuid())
+  workspaceId String
+  title       String
+  auditDate   DateTime
+  scope       String      @db.Text
+  status      AuditStatus @default(PLANNED)
+  completedAt DateTime?
+  findings    String?     @db.Text
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, auditDate])
+}
+
+model ManagementReview {
+  id          String   @id @default(cuid())
+  workspaceId String
+  reviewDate  DateTime
+  attendees   String   @db.Text
+  decisions   String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, reviewDate])
+}
+
+model TrainingRecord {
+  id          String         @id @default(cuid())
+  workspaceId String
+  course      String
+  assignee    String
+  status      TrainingStatus @default(ASSIGNED)
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+}
+
+model Supplier {
+  id             String              @id @default(cuid())
+  workspaceId    String
+  name           String
+  service        String
+  category       String
+  criticality    SupplierCriticality @default(MEDIUM)
+  status         SupplierStatus      @default(ACTIVE)
+  ownerId        String
+  dataAccess     Boolean             @default(false)
+  dpaSigned      Boolean             @default(false)
+  assurance      String?
+  lastReviewedAt DateTime?
+  nextReviewAt   DateTime?
+  notes          String?             @db.Text
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner             User               @relation("SupplierOwner", fields: [ownerId], references: [id])
+  incidents         Incident[]
+  correctiveActions CorrectiveAction[]
+
+  @@index([workspaceId, criticality])
+  @@index([workspaceId, nextReviewAt])
+}
+
+model Incident {
+  id          String           @id @default(cuid())
+  workspaceId String
+  reference   String
+  title       String
+  description String           @db.Text
+  category    IncidentCategory @default(OTHER)
+  severity    IncidentSeverity @default(MEDIUM)
+  status      IncidentStatus   @default(OPEN)
+  ownerId     String
+  detectedAt  DateTime
+  containedAt DateTime?
+  resolvedAt  DateTime?
+  impact      String?          @db.Text
+  rootCause   String?          @db.Text
+  resolution  String?          @db.Text
+  reportedBy  String?
+  supplierId  String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner             User               @relation("IncidentOwner", fields: [ownerId], references: [id])
+  supplier          Supplier?          @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  updates           IncidentUpdate[]
+  correctiveActions CorrectiveAction[]
+
+  @@unique([workspaceId, reference])
+  @@index([workspaceId, status])
+  @@index([workspaceId, severity])
+}
+
+model IncidentUpdate {
+  id         String         @id @default(cuid())
+  incidentId String
+  actorId    String?
+  actorName  String
+  status     IncidentStatus
+  note       String?        @db.Text
+  createdAt  DateTime       @default(now())
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  actor    User?    @relation("IncidentUpdateActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([incidentId, createdAt])
+}
+
+model CorrectiveAction {
+  id                String         @id @default(cuid())
+  workspaceId       String
+  reference         String
+  title             String
+  description       String         @db.Text
+  source            ActionSource   @default(OTHER)
+  status            ActionStatus   @default(OPEN)
+  priority          ActionPriority @default(MEDIUM)
+  ownerId           String
+  dueDate           DateTime?
+  completedAt       DateTime?
+  verifiedAt        DateTime?
+  effectivenessNote String?        @db.Text
+  incidentId        String?
+  supplierId        String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner     User      @relation("CorrectiveActionOwner", fields: [ownerId], references: [id])
+  incident  Incident? @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+  supplier  Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@unique([workspaceId, reference])
+  @@index([workspaceId, status])
+  @@index([workspaceId, dueDate])
+}
+
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        Role
+  title       String?
+  createdAt   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+model Framework {
+  id          String             @id @default(cuid())
+  key         String             @unique
+  name        String
+  version     String
+  description String
+  meta        Json?
+  controls    FrameworkControl[]
+}
+
+model FrameworkControl {
+  id          String @id @default(cuid())
+  frameworkId String
+  ref         String
+  title       String
+  description String
+  category    String
+  sortOrder   Int    @default(0)
+  meta        Json?
+
+  framework         Framework          @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  policies          PolicyControl[]
+  risks             RiskControl[]
+  workspaceControls WorkspaceControl[]
+  evidence          Evidence[]
+
+  @@unique([frameworkId, ref])
+  @@index([category])
+}
+
+model WorkspaceControl {
+  id              String        @id @default(cuid())
+  workspaceId     String
+  controlId       String
+  status          ControlStatus @default(NOT_STARTED)
+  note            String?
+  justification   String?
+  ownerId         String?
+  dueDate         DateTime?
+  reviewFrequency String?
+  reviewedAt      DateTime?
+  updatedAt       DateTime      @updatedAt
+
+  workspace Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  control   FrameworkControl @relation(fields: [controlId], references: [id], onDelete: Cascade)
+  owner     User?            @relation("FrameworkControlOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@unique([workspaceId, controlId])
+  @@index([workspaceId, status])
+  @@index([workspaceId, ownerId])
+}
+
+model Asset {
+  id             String   @id @default(cuid())
+  workspaceId    String
+  name           String
+  type           String   @default("Application")
+  classification String   @default("Internal")
+  location       String?
+  ownerId        String?
+  inScope        Boolean  @default(true)
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner     User?     @relation("AssetOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, type])
+  @@index([workspaceId, inScope])
+}
+
+model BusinessImpactAnalysis {
+  id                 String    @id @default(cuid())
+  workspaceId        String
+  functionName       String
+  ownerId            String?
+  priority           String    @default("MEDIUM")
+  rtoHours           Int?
+  rpoHours           Int?
+  mtpdHours          Int?
+  impactFinancial    Int       @default(3)
+  impactOperational  Int       @default(3)
+  impactRegulatory   Int       @default(3)
+  impactReputational Int       @default(3)
+  impactCustomer     Int       @default(3)
+  dependencies       String?   @db.Text
+  recoveryResources  String?   @db.Text
+  lastTestedAt       DateTime?
+  notes              String?   @db.Text
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner     User?     @relation("ImpactOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, priority])
+}
+
+model Measurement {
+  id             String    @id @default(cuid())
+  workspaceId    String
+  name           String
+  method         String?
+  frequency      String    @default("Monthly")
+  responsibleId  String?
+  target         String?
+  latestResult   String?
+  lastMeasuredAt DateTime?
+  notes          String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  responsible User?     @relation("MeasurementOwner", fields: [responsibleId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, frequency])
+}
+
+model AiSystem {
+  id             String    @id @default(cuid())
+  workspaceId    String
+  name           String
+  vendor         String?
+  purpose        String?   @db.Text
+  modelType      String    @default("Foundation model")
+  lifecycle      String    @default("PILOT")
+  riskTier       String    @default("LIMITED")
+  ownerId        String?
+  dataTypes      String?
+  humanOversight String?   @db.Text
+  nextReviewAt   DateTime?
+  notes          String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner       User?                @relation("AiSystemOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  assessments AiImpactAssessment[]
+
+  @@index([workspaceId, riskTier])
+  @@index([workspaceId, lifecycle])
+}
+
+model AiImpactAssessment {
+  id                String    @id @default(cuid())
+  workspaceId       String
+  systemId          String
+  title             String
+  scope             String?   @db.Text
+  findings          String?   @db.Text
+  individualsImpact Int       @default(3)
+  societalImpact    Int       @default(3)
+  outcome           String    @default("APPROVED")
+  mitigations       String?   @db.Text
+  approvedAt        DateTime?
+  nextReviewAt      DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  system    AiSystem  @relation(fields: [systemId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, outcome])
+  @@index([workspaceId, systemId])
+}
+
+model Policy {
+  id          String       @id @default(cuid())
+  workspaceId String
+  title       String
+  category    String
+  summary     String?
+  content     String
+  status      PolicyStatus @default(DRAFT)
+  version     Int          @default(1)
+  ownerId     String
+  reviewDueAt DateTime?
+  approvedAt  DateTime?
+  // Provenance for AI-drafted policies: they stay DRAFT until a human approves,
+  // and the model that wrote the first version is kept for the audit trail.
+  aiGenerated Boolean      @default(false)
+  aiModel     String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner     User            @relation("PolicyOwner", fields: [ownerId], references: [id])
+  controls  PolicyControl[]
+  versions  PolicyVersion[]
+  evidence  Evidence[]
+
+  @@index([workspaceId, status])
+  @@index([workspaceId, reviewDueAt])
+}
+
+model PolicyControl {
+  policyId  String
+  controlId String
+
+  policy  Policy           @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  control FrameworkControl @relation(fields: [controlId], references: [id], onDelete: Cascade)
+
+  @@id([policyId, controlId])
+  @@index([controlId])
+}
+
+model PolicyVersion {
+  id          String       @id @default(cuid())
+  policyId    String
+  version     Int
+  title       String
+  content     String
+  status      PolicyStatus
+  changedById String
+  note        String?
+  createdAt   DateTime     @default(now())
+
+  policy    Policy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  changedBy User   @relation(fields: [changedById], references: [id])
+
+  @@unique([policyId, version])
+  @@index([policyId, createdAt])
+}
+
+model Risk {
+  id          String     @id @default(cuid())
+  workspaceId String
+  title       String
+  description String
+  category    String
+  likelihood  Int
+  impact      Int
+  score       Int
+  treatment   Treatment
+  status      RiskStatus @default(OPEN)
+  ownerId     String
+  dueDate     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  workspace Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner     User          @relation("RiskOwner", fields: [ownerId], references: [id])
+  controls  RiskControl[]
+  actions   RiskAction[]
+  evidence  Evidence[]
+
+  @@index([workspaceId, status])
+  @@index([workspaceId, score])
+}
+
+model RiskControl {
+  riskId    String
+  controlId String
+
+  risk    Risk             @relation(fields: [riskId], references: [id], onDelete: Cascade)
+  control FrameworkControl @relation(fields: [controlId], references: [id], onDelete: Cascade)
+
+  @@id([riskId, controlId])
+  @@index([controlId])
+}
+
+model RiskAction {
+  id        String    @id @default(cuid())
+  riskId    String
+  title     String
+  done      Boolean   @default(false)
+  dueDate   DateTime?
+  ownerId   String?
+  createdAt DateTime  @default(now())
+
+  risk  Risk  @relation(fields: [riskId], references: [id], onDelete: Cascade)
+  owner User? @relation("ActionOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([riskId, done])
+}
+
+model Evidence {
+  id           String       @id @default(cuid())
+  workspaceId  String
+  name         String
+  description  String?
+  fileName     String
+  mimeType     String
+  sizeBytes    Int
+  storageKey   String
+  checksum     String
+  kind         EvidenceKind @default(DOCUMENT)
+  uploadedById String
+  policyId     String?
+  riskId       String?
+  controlId    String?
+  expiresAt    DateTime?
+  verifiedAt   DateTime?
+  createdAt    DateTime     @default(now())
+
+  workspace  Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  uploadedBy User              @relation(fields: [uploadedById], references: [id])
+  policy     Policy?           @relation(fields: [policyId], references: [id], onDelete: SetNull)
+  risk       Risk?             @relation(fields: [riskId], references: [id], onDelete: SetNull)
+  control    FrameworkControl? @relation(fields: [controlId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt])
+  @@index([workspaceId, policyId])
+  @@index([workspaceId, riskId])
+  @@index([workspaceId, expiresAt])
+}
+
+model AuditEvent {
+  id          String   @id @default(cuid())
+  workspaceId String
+  actorId     String?
+  actorName   String
+  action      String
+  entityType  String
+  entityId    String?
+  summary     String
+  detail      String?
+  createdAt   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  actor     User?     @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt])
+  @@index([workspaceId, entityType])
+}
+
+// ── Evidence automation ─────────────────────────────────────────────────────
+// A connector pulls configuration state from a system of record and maps it to
+// controls. Checks are the individual assertions that pass, fail or go stale.
+
+model Integration {
+  id          String    @id @default(cuid())
+  workspaceId String
+  provider    String
+  displayName String
+  status      String    @default("NOT_CONNECTED")
+  account     String?
+  lastSyncAt  DateTime?
+  lastError   String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  checks    EvidenceCheck[]
+
+  @@unique([workspaceId, provider])
+  @@index([workspaceId, status])
+}
+
+model EvidenceCheck {
+  id            String    @id @default(cuid())
+  workspaceId   String
+  integrationId String
+  name          String
+  controlRef    String?
+  state         String    @default("STALE")
+  detail        String?   @db.Text
+  lastRunAt     DateTime?
+  createdAt     DateTime  @default(now())
+
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, state])
+  @@index([integrationId, name])
+}
+
+// ── Offensive: automated vulnerability scans ────────────────────────────────
+
+model VulnerabilityScan {
+  id          String    @id @default(cuid())
+  workspaceId String
+  target      String
+  kind        String    @default("WEB")
+  status      String    @default("QUEUED")
+  critical    Int       @default(0)
+  high        Int       @default(0)
+  medium      Int       @default(0)
+  low         Int       @default(0)
+  findings    Int       @default(0)
+  requestedBy String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt])
+}
+
+// ── Enterprise: SSO and SCIM provisioning ───────────────────────────────────
+
+model SsoSettings {
+  id             String   @id @default(cuid())
+  workspaceId    String   @unique
+  enabled        Boolean  @default(false)
+  emailDomain    String?
+  defaultRole    String   @default("MEMBER")
+  discoveryUrl   String?
+  clientId       String?
+  clientSecret   String?
+  dnsToken       String?
+  domainVerified Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model ScimToken {
+  id          String    @id @default(cuid())
+  workspaceId String
+  name        String
+  role        String    @default("MEMBER")
+  prefix      String
+  tokenHash   String
+  createdAt   DateTime  @default(now())
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt])
+}
