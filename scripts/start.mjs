@@ -25,7 +25,10 @@ function resolvePort() {
 }
 
 const port = resolvePort();
-const host = process.env.HOSTNAME?.trim() || "0.0.0.0";
+// Bind every interface. Never use HOSTNAME here: containers (Render included)
+// set it to the pod's own hostname, and binding to that name makes the proxy
+// unreachable with a 502 even though Next reports "Ready".
+const host = process.env.HOST?.trim() || "0.0.0.0";
 const nextCli = path.join(process.cwd(), "node_modules", "next", "dist", "bin", "next");
 
 console.log(`[auditix] starting next on ${host}:${port}`);
