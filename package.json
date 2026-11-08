@@ -8,7 +8,7 @@
     "dev": "next dev -p 8077",
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
-    "start": "next start",
+    "start": "node scripts/start.mjs",
     "typecheck": "tsc --noEmit",
     "db:start": "prisma dev start auditix",
     "db:generate": "prisma generate",

@@ -19,8 +19,9 @@ services:
     runtime: node
     plan: free
     buildCommand: npm install && npm run build
-    # next start honours the PORT Render assigns; the bootstrap applies
-    # migrations (idempotent) and seeds only an empty database.
+    # The bootstrap applies migrations (idempotent) and seeds only an empty
+    # database. `npm start` resolves PORT itself, so an empty value cannot
+    # crash Next's -p flag; it falls back to 8077.
     startCommand: node scripts/bootstrap.mjs && npm start
     healthCheckPath: /api/v1/health
     envVars:

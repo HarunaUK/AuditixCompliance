@@ -72,8 +72,11 @@ Then create a Postgres instance, copy its **internal** connection string into `D
 and add `AUTH_SECRET` (`openssl rand -base64 32`), `DEMO_EMAIL`, `DEMO_PASSWORD` and
 `AI_KEYLESS=1`.
 
-`npm start` runs plain `next start`, which listens on the `PORT` the platform assigns — a
-hardcoded port makes Render's port scan fail even when the build succeeds.
+`npm start` runs `scripts/start.mjs`, which reads `PORT` and then starts `next start` on it. A
+hardcoded port makes Render's port scan fail even when the build succeeds, and passing `PORT`
+straight through is unsafe because a *blank* value makes Next exit with `value '' from env
+'PORT' is invalid`. The script treats a blank or non-numeric `PORT` as unset and falls back to
+8077, so if you see that error, also delete any empty `PORT` variable from the dashboard.
 
 `scripts/bootstrap.mjs` applies `prisma migrate deploy` on every boot and seeds the demo
 workspace only when the database is empty, so no manual migration step is needed. To seed or
