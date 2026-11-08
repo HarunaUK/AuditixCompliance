@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -66,17 +67,70 @@ const ICONS: Record<string, LucideIcon> = {
 
 export type NavItem = { href: string; label: string; icon: keyof typeof ICONS; badge?: string };
 
+/** Routes that are also path prefixes of sibling pages, so they match exactly. */
+const EXACT_ROUTES = [
+  "/dashboard",
+  "/aims",
+  "/eu",
+  "/soc2",
+  "/me",
+  "/sg",
+  "/pk",
+  "/frameworks/iso_42001",
+  "/frameworks/iso-27001-2022",
+  "/frameworks/soc2",
+  "/frameworks/gdpr",
+];
+
 /**
  * Every workspace route is dynamic (each render queries Postgres), so fetching
  * every visible link on load would queue up ~40 server renders behind the page
- * you actually opened. Instead each link warms itself only once the pointer or
- * keyboard focus lands on it, which is normally a few hundred milliseconds
- * before the click lands.
+ * you actually opened. Instead each link warms itself once the pointer or
+ * keyboard focus lands on it, and pointerdown covers the case where a click
+ * arrives before hover had time to finish.
+ *
+ * After the page settles, the group the visitor is currently in is warmed one
+ * route at a time. That is a handful of routes rather than forty, and it is the
+ * group they are most likely to click next, so the following clicks come from
+ * the client router cache instead of waiting on a server render.
  */
 export function NavList({ groups }: { groups: { label: string; items: NavItem[] }[] }) {
   const pathname = usePathname();
   const router = useRouter();
   const warm = (href: string) => router.prefetch(href);
+
+  // Held in a ref so the prefetch effect only restarts on navigation, not on
+  // every re-render of the shell.
+  const groupsRef = useRef(groups);
+  groupsRef.current = groups;
+
+  useEffect(() => {
+    const isActive = (href: string) =>
+      EXACT_ROUTES.includes(href) ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+    const all = groupsRef.current;
+    const activeGroup = all.find((group) => group.items.some((item) => isActive(item.href))) ?? all[0];
+    const targets = (activeGroup?.items ?? [])
+      .map((item) => item.href)
+      .filter((href) => !isActive(href))
+      .slice(0, 8);
+
+    let cancelled = false;
+    let index = 0;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const step = () => {
+      if (cancelled || index >= targets.length) return;
+      router.prefetch(targets[index]);
+      index += 1;
+      timer = setTimeout(step, 600);
+    };
+
+    timer = setTimeout(step, 1800);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [pathname, router]);
 
   return (
     <nav className="flex gap-1 overflow-x-auto pb-2 lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden lg:pb-0 lg:pr-1" aria-label="Workspace">
@@ -87,8 +141,7 @@ export function NavList({ groups }: { groups: { label: string; items: NavItem[] 
           </p>
           {group.items.map((item) => {
             const Icon = ICONS[item.icon] ?? CircleGauge;
-            const exact = ["/dashboard", "/aims", "/eu", "/soc2", "/me", "/sg", "/pk", "/frameworks/iso_42001", "/frameworks/iso-27001-2022", "/frameworks/soc2", "/frameworks/gdpr"];
-            const active = exact.includes(item.href) ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const active = EXACT_ROUTES.includes(item.href) ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}
@@ -96,6 +149,7 @@ export function NavList({ groups }: { groups: { label: string; items: NavItem[] 
                 prefetch={false}
                 onMouseEnter={() => warm(item.href)}
                 onFocus={() => warm(item.href)}
+                onPointerDown={() => warm(item.href)}
                 className={cn(
                   "group flex h-8 shrink-0 items-center gap-2.5 rounded-lg px-2.5 text-[12.5px] transition-colors",
                   active
