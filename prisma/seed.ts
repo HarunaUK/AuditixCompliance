@@ -29,8 +29,9 @@ import { PrismaClient as Client } from "@prisma/client";
 
 const db: PrismaClient = new Client();
 const UPLOAD_ROOT = path.join(process.cwd(), ".data", "uploads");
-const DEMO_EMAIL = process.env.DEMO_EMAIL ?? "auditix@faseel.app";
+const DEMO_EMAIL = process.env.DEMO_EMAIL ?? "test@auditixcompliance.co.uk";
 const DEMO_PASSWORD = process.env.DEMO_PASSWORD ?? "auditix-demo-2026";
+const DEMO_NAME = process.env.DEMO_NAME ?? "Sherzod";
 const LEGACY_EMAILS = ["demo@auditix.local", "priya@auditix.local", "daniel@auditix.local"];
 const SLUGS = ["northwind-cloud", "meridian-health"];
 
@@ -405,7 +406,7 @@ const evidenceSeed = [
     policy: "Access Control Policy",
     risk: "Phishing leads to workforce credential compromise",
     control: "A.5.18",
-    body: "account,owner,role,reviewed_by,decision\nruby@northwind.example,Ruby Ellis,engineer,Alex Morgan,retain\nsam@northwind.example,Sam Okafor,finance,Alex Morgan,retain\nsvc-deploy,Platform,service,Alex Morgan,retain\ncontractor-17,External,read-only,Alex Morgan,revoked\n",
+    body: "account,owner,role,reviewed_by,decision\nruby@northwind.example,Ruby Ellis,engineer,Sherzod,retain\nsam@northwind.example,Sam Okafor,finance,Sherzod,retain\nsvc-deploy,Platform,service,Sherzod,retain\ncontractor-17,External,read-only,Sherzod,revoked\n",
   },
   {
     name: "Incident response runbook",
@@ -626,7 +627,7 @@ async function main() {
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 12);
 
   const demo = await db.user.create({
-    data: { name: "Alex Morgan", email: DEMO_EMAIL, passwordHash },
+    data: { name: DEMO_NAME, email: DEMO_EMAIL, passwordHash },
   });
   const priya = await db.user.create({
     data: { name: "Priya Nair", email: "priya@auditix.local", passwordHash },
@@ -918,7 +919,7 @@ async function main() {
       {
         workspaceId: northwind.id,
         role: "CISO",
-        holder: "Alex Morgan",
+        holder: "Sherzod",
         responsibilities:
           "Owns the ISMS, sets the risk appetite, approves the risk methodology and reports ISMS performance to the board.",
         authority: "Accepts residual risk up to the board-approved threshold and commissions internal audits.",
@@ -1004,7 +1005,7 @@ async function main() {
     data: {
       workspaceId: northwind.id,
       reviewDate: days(-30),
-      attendees: "Alex Morgan (CISO), Priya Nair (ISMS Manager), Daniel Okafor (Engineering Lead), Sam Patel (CEO)",
+      attendees: "Sherzod (CISO), Priya Nair (ISMS Manager), Daniel Okafor (Engineering Lead), Sam Patel (CEO)",
       decisions:
         "Accepted the residual risk position on the legacy monolith migration. Approved two additional engineering days per month for control maintenance. Agreed to commission the external Stage 1 readiness review in Q1. Noted the leaver-access nonconformity as closed with monitoring.",
       createdAt: days(-30),

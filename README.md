@@ -14,7 +14,8 @@ npm run serve          # production build supervisor on :8077
 
 `npm run serve:dev` runs `next dev` behind the same supervisor (slower, hot reload).
 
-Demo sign-in: `auditix@faseel.app` / `2Uk_EF8YKydydHcs27S9VVPnA9!` (see `.env` for overrides).
+Demo sign-in: `test@auditixcompliance.co.uk` / `2Uk_EF8YKydydHcs27S9VVPnA9!` as **Sherzod**
+(see `.env` for overrides).
 
 ## Registers, imports and exports
 

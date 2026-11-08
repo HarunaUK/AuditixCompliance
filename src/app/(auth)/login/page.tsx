@@ -19,7 +19,7 @@ export default async function LoginPage() {
       <p className="mb-7 mt-1.5 text-[12.5px] text-muted">Pick up where your compliance work left off.</p>
       <LoginForm
         demo={{
-          email: process.env.DEMO_EMAIL ?? "auditix@faseel.app",
+          email: process.env.DEMO_EMAIL ?? "test@auditixcompliance.co.uk",
           password: process.env.DEMO_PASSWORD ?? "auditix-demo-2026",
         }}
       />
