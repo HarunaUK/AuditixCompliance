@@ -598,6 +598,27 @@ async function createWorkspace(opts: {
 async function main() {
   console.log("Seeding Auditix demo data…");
   await db.workspace.deleteMany({ where: { slug: { in: SLUGS } } });
+
+  // Deleting the seeded workspaces cascades their records, but the demo user also
+  // owns records in workspaces this reset deliberately keeps. Those foreign keys
+  // are required, so they have to be cleared before the users can be deleted —
+  // otherwise a second `npm run db:seed` fails with Policy_ownerId_fkey.
+  const demoUsers = await db.user.findMany({
+    where: { email: { in: [DEMO_EMAIL, ...LEGACY_EMAILS] } },
+    select: { id: true },
+  });
+  const demoUserIds = demoUsers.map((user) => user.id);
+  if (demoUserIds.length > 0) {
+    const owned = { ownerId: { in: demoUserIds } };
+    await db.policy.deleteMany({ where: owned });
+    await db.risk.deleteMany({ where: owned });
+    await db.supplier.deleteMany({ where: owned });
+    await db.incident.deleteMany({ where: owned });
+    await db.correctiveAction.deleteMany({ where: owned });
+    await db.evidence.deleteMany({ where: { uploadedById: { in: demoUserIds } } });
+    await db.policyVersion.deleteMany({ where: { changedById: { in: demoUserIds } } });
+  }
+
   await db.user.deleteMany({ where: { email: { in: [DEMO_EMAIL, ...LEGACY_EMAILS] } } });
 
   const controls = await seedFrameworks();

@@ -78,9 +78,16 @@ straight through is unsafe because a *blank* value makes Next exit with `value '
 'PORT' is invalid`. The script treats a blank or non-numeric `PORT` as unset and falls back to
 8077, so if you see that error, also delete any empty `PORT` variable from the dashboard.
 
-`scripts/bootstrap.mjs` applies `prisma migrate deploy` on every boot and seeds the demo
-workspace only when the database is empty, so no manual migration step is needed. To seed or
-reset deliberately, run `npm run db:seed` from a Render shell.
+`scripts/bootstrap.mjs` syncs the schema with `prisma db push` on every boot and seeds the demo
+workspace only when the database has no users, so no manual step is needed. It uses `db push`
+rather than `migrate deploy` because the schema outgrew the original migration files: deploying
+those created tables without the newer columns and the seed then failed on `Framework.meta`.
+`db push` compares the live database to `schema.prisma` and repairs whatever is missing, which
+also fixes an already-drifted database. `prisma/migrations` holds a single baseline generated
+from the current schema for anyone who prefers a `migrate` workflow.
+
+To seed or reset deliberately, run `npm run db:seed` from a Render shell. It resets the demo
+workspaces and any records those demo users own.
 
 Free instance caveats: the service sleeps after inactivity (first request is slow), the free
 Postgres expires after 30 days, and uploads written with `STORAGE_DRIVER=local` are lost on

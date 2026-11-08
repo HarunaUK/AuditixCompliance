@@ -1,10 +1,18 @@
 /**
  * Boot sequence for a hosted database (Render, Fly, Railway…).
  *
- * `prisma migrate deploy` is idempotent, so it runs on every boot and keeps a
- * fresh instance's schema current. Seeding is not: `prisma/seed.ts` resets the
- * demo workspaces, so it is only run when the database has no users at all —
- * which is exactly the first boot against an empty Postgres.
+ * The schema is synced with `prisma db push` rather than `migrate deploy`. The
+ * schema was evolving through `db push` during development, so the old
+ * migration files fell behind it and a fresh deploy created tables without the
+ * newer columns (the seed then failed on `Framework.meta`). `db push` compares
+ * the live database to `schema.prisma` and adds whatever is missing, which
+ * repairs a drifted database instead of refusing to start. It is idempotent, so
+ * it runs on every boot. `prisma/migrations` keeps a baseline for deliberate
+ * `migrate` workflows.
+ *
+ * Seeding is not idempotent: `prisma/seed.ts` resets the demo workspaces, so it
+ * only runs when the database has no users at all — the first boot against an
+ * empty Postgres.
  *
  *   node scripts/bootstrap.mjs && next start
  *
@@ -31,7 +39,13 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-run(["node_modules/prisma/build/index.js", "migrate", "deploy"]);
+run([
+  "node_modules/prisma/build/index.js",
+  "db",
+  "push",
+  "--skip-generate",
+  "--accept-data-loss",
+]);
 
 const { PrismaClient } = await import("@prisma/client");
 const db = new PrismaClient();
